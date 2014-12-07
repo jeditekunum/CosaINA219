@@ -1,6 +1,6 @@
 /**
  * @file INA219.cpp
- * @version 0.8
+ * @version 0.9
  *
  * @section License
  * Copyright (C) 2014, jediunix
@@ -146,12 +146,7 @@ INA219::end()
 void
 INA219::write_register(register_t reg, uint16_t value)
 {
-  uint8_t byte;
-
-  // swap
-  byte = value >> 8;
-  value <<= 8;
-  value |= byte;
+  value = swap(value);
 
   twi.begin(this);
   twi.write((uint8_t)reg, &value, sizeof(value));
@@ -161,7 +156,6 @@ INA219::write_register(register_t reg, uint16_t value)
 uint16_t
 INA219::read_register(register_t reg)
 {
-  uint8_t byte;
   uint16_t res;
 
   if (!m_active)
@@ -182,10 +176,7 @@ INA219::read_register(register_t reg)
   twi.read(&res, sizeof(res));
   twi.end();
 
-  // swap
-  byte = res >> 8;
-  res <<= 8;
-  res |= byte;
+  res = swap(res);
 
   return (res);
 }

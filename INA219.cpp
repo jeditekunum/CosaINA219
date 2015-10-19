@@ -148,9 +148,9 @@ INA219::write_register(register_t reg, uint16_t value)
 {
   value = swap(value);
 
-  twi.begin(this);
+  twi.acquire(this);
   twi.write((uint8_t)reg, &value, sizeof(value));
-  twi.end();
+  twi.release();
 }
 
 uint16_t
@@ -161,7 +161,7 @@ INA219::read_register(register_t reg)
   if (!m_active)
     return (0);
 
-  twi.begin(this);
+  twi.acquire(this);
   twi.write((uint8_t)reg);
 
   // If mode is triggered then wait for conversion to complete
@@ -174,7 +174,7 @@ INA219::read_register(register_t reg)
     wait(reg);
 
   twi.read(&res, sizeof(res));
-  twi.end();
+  twi.release();
 
   res = swap(res);
 
